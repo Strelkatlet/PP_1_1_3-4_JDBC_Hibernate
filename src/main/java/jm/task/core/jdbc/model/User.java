@@ -18,9 +18,9 @@ public class User {
     @Column
     private Byte age;
 
-    public User(long l) {
+    public User() {}
 
-    }
+    public User(long l) {}
 
     public User(String name, String lastName, Byte age) {
         this.name = name;
@@ -28,9 +28,7 @@ public class User {
         this.age = age;
     }
 
-    public User() {
 
-    }
 
     public Long getId() {
         return id;

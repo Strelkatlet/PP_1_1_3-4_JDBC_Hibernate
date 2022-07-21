@@ -1,176 +1,140 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import static jm.task.core.jdbc.util.Util.getConnection;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private String createUsersTable = "create table users(id BIGINT AUTO_INCREMENT primary key," +
+    private final String createUsersTable = "create table users(id BIGINT AUTO_INCREMENT primary key," +
             " name varchar(32)," +
             " lastName varchar(32)," +
             " age TINYINT)";
-    private String dropUsersTable = "DROP TABLE users";
-    private String saveUser = "insert into users VALUES(default,?,?,?)";
-    private String removeUserById = "DELETE FROM users WHERE id = ";
-    private String getAllUsers = "select * from users";
-    private String cleanUsersTable = "delete from users";
-    private PreparedStatement preparedstatement = null;
-    private Statement statement = null;
-    private Connection connection = null;
-    public UserDaoJDBCImpl() {
+    private final String dropUsersTable = "DROP TABLE users";
+    private final String saveUser = "insert into users VALUES(default,?,?,?)";
+    private final String removeUserById = "DELETE FROM users WHERE id = ";
+    private final String getAllUsers = "select * from users";
+    private final String cleanUsersTable = "delete from users";
 
+    public UserDaoJDBCImpl() {
     }
 
     public void createUsersTable() {
-        try {
-            connection = Util.getConnection();
-            statement = connection.createStatement();
-            statement.executeUpdate(createUsersTable);
-            connection.commit();
+        try (var connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(createUsersTable)) {
+                ps.execute(createUsersTable);
             } catch (SQLException e) {
-            try {
                 connection.rollback();
-            } catch (SQLException e1) {
-                System.out.println(e.getMessage());
+                connection.setAutoCommit(true);
+                throw e;
             }
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
         }
     }
 
     public void dropUsersTable() {
-        try {
-            connection = Util.getConnection();
-            statement = connection.createStatement();
-            statement.execute(dropUsersTable);
-            connection.commit();
-        } catch (SQLException e) {
-            try {
+        try (var connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(dropUsersTable)) {
+                ps.execute(dropUsersTable);
+            } catch (SQLException e) {
                 connection.rollback();
-            } catch (SQLException e1) {
-                System.out.println(e.getMessage());
+                connection.setAutoCommit(true);
+                throw e;
             }
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
         }
-    }
-
+     }
+//
     public void saveUser(String name, String lastName, byte age) {
-        try {
-            connection = Util.getConnection();
+        try (var connection = getConnection()) {
             User user = new User(name, lastName, age);
-            PreparedStatement ps = connection.prepareStatement(saveUser, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getLastName());
-            ps.setInt(3, user.getAge());
-            ps.executeUpdate();
-            connection.commit();
-        } catch (SQLException e) {
-            try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(saveUser, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, user.getName());
+                ps.setString(2, user.getLastName());
+                ps.setInt(3, user.getAge());
+                ps.executeUpdate();
+            }catch (SQLException e) {
                 connection.rollback();
-            } catch (SQLException e1) {
-                throw new RuntimeException(e1);
+                connection.setAutoCommit(true);
+                throw e;
             }
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-
     }
-
+//
     public void removeUserById(long id) {
-        try {
-            connection = Util.getConnection();
-            statement = connection.createStatement();
-            statement.execute(removeUserById + id);
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException e1) {
-                throw new RuntimeException(e1);
-            }
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                connection.close();
+        try (var connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(removeUserById)) {
+                ps.execute(removeUserById + id);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                connection.rollback();
+                connection.setAutoCommit(true);
+                throw e;
             }
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
-
+//
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
-        try {
-            connection = Util.getConnection();
-            statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(getAllUsers);
+        try (var connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(getAllUsers)) {
+                ResultSet resultSet = ps.executeQuery(getAllUsers);
 
-            while (resultSet.next()) {
-                User user = new User();
-                user.setId(resultSet.getLong("id"));
-                user.setName(resultSet.getString("name"));
-                user.setLastName(resultSet.getString("lastName"));
-                user.setAge(resultSet.getByte("age"));
-                userList.add(user);
-                System.out.println(user);
+                while (resultSet.next()) {
+                    User user = new User();
+                    user.setId(resultSet.getLong("id"));
+                    user.setName(resultSet.getString("name"));
+                    user.setLastName(resultSet.getString("lastName"));
+                    user.setAge(resultSet.getByte("age"));
+                    userList.add(user);
+                    System.out.println(user);
+                }
+            } catch (SQLException e) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                throw e;
             }
             connection.commit();
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException e1) {
-                throw new RuntimeException(e1);
-            }
-            e.printStackTrace();
-        } finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            System.out.println(e.getMessage());
         }
         return userList;
     }
-
+//
     public void cleanUsersTable() {
-        try {
-            connection = Util.getConnection();
-            statement = connection.createStatement();
-            statement.executeUpdate(cleanUsersTable);
-            connection.commit();
-        } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException e1) {
-                throw new RuntimeException(e1);
-            }
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                connection.close();
+        try (var connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement ps = connection.prepareStatement(cleanUsersTable)) {
+                ps.execute(cleanUsersTable);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                connection.rollback();
+                connection.setAutoCommit(true);
+                throw e;
             }
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
