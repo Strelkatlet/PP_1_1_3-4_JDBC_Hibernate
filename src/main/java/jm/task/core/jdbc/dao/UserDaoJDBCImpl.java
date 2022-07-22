@@ -4,9 +4,9 @@ import jm.task.core.jdbc.model.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import static jm.task.core.jdbc.util.Util.getConnection;
+//import static jm.task.core.jdbc.util.Util.getConnection;
 
-public class UserDaoJDBCImpl implements UserDao {
+/*public class UserDaoJDBCImpl implements UserDao {
     private final String createUsersTable = "create table users(id BIGINT AUTO_INCREMENT primary key," +
             " name varchar(32)," +
             " lastName varchar(32)," +
@@ -53,7 +53,7 @@ public class UserDaoJDBCImpl implements UserDao {
             System.out.println(e.getMessage());
         }
      }
-//
+
     public void saveUser(String name, String lastName, byte age) {
         try (var connection = getConnection()) {
             User user = new User(name, lastName, age);
@@ -74,7 +74,7 @@ public class UserDaoJDBCImpl implements UserDao {
             System.out.println(e.getMessage());
         }
     }
-//
+
     public void removeUserById(long id) {
         try (var connection = getConnection()) {
             connection.setAutoCommit(false);
@@ -91,7 +91,7 @@ public class UserDaoJDBCImpl implements UserDao {
             System.out.println(e.getMessage());
         }
     }
-//
+
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         try (var connection = getConnection()) {
@@ -120,7 +120,7 @@ public class UserDaoJDBCImpl implements UserDao {
         }
         return userList;
     }
-//
+
     public void cleanUsersTable() {
         try (var connection = getConnection()) {
             connection.setAutoCommit(false);
@@ -138,3 +138,4 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 }
+ */
