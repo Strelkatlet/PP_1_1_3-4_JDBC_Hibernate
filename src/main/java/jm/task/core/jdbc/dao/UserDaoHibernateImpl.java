@@ -11,14 +11,13 @@ import java.util.List;
 import static jm.task.core.jdbc.util.Util.getSessionFactory;
 
 public class UserDaoHibernateImpl implements UserDao {
-    private final String createUsersTable = "create table IF NOT EXISTS User (id BIGINT AUTO_INCREMENT primary key," +
+    private final String CUT = "create table IF NOT EXISTS User (id BIGINT AUTO_INCREMENT primary key," +
             " name varchar(32)," +
             " lastName varchar(32)," +
             " age TINYINT)";
-    private final String dropUsersTable = "DROP TABLE IF EXISTS User";
-    private final String removeUserById = "delete User where id = :id";
-    private final String getAllUsers = "from User";
-    private final String cleanUsersTable = "delete User";
+    private final String DUT = "DROP TABLE IF EXISTS User";
+    private final String GAU = "from User";
+    private final String CLUT = "delete User";
     Transaction transaction = null;
 
     public UserDaoHibernateImpl() {
@@ -29,7 +28,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void createUsersTable() {
         try (Session session = getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query query = session.createSQLQuery(createUsersTable).addEntity(User.class);
+            Query query = session.createSQLQuery(CUT).addEntity(User.class);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {
@@ -44,7 +43,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void dropUsersTable() {
         try (Session session = getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query query = session.createSQLQuery(dropUsersTable).addEntity(User.class);
+            Query query = session.createSQLQuery(DUT).addEntity(User.class);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {
@@ -93,7 +92,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> userList = null;
         try (Session session = getSessionFactory().openSession()) {
-            userList = session.createQuery(getAllUsers).list();
+            userList = session.createQuery(GAU).list();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -104,7 +103,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void cleanUsersTable() {
         try (Session session = getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Query query = session.createQuery(cleanUsersTable);
+            Query query = session.createQuery(CLUT);
             query.executeUpdate();
             transaction.commit();
         } catch (Exception e) {
