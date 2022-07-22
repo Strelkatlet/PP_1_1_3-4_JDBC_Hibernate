@@ -9,23 +9,23 @@ import java.util.List;
 import static jm.task.core.jdbc.util.Util.getConnection;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private final String CREATEUSERSTABLE = "create table users(id BIGINT AUTO_INCREMENT primary key," +
+    private final String CREATE_USERS_TABLE = "create table users(id BIGINT AUTO_INCREMENT primary key," +
             " name varchar(32)," +
             " lastName varchar(32)," +
             " age TINYINT)";
-    private final String DROPUSERSTABLE = "DROP TABLE users";
-    private final String SAVEUSER = "insert into users VALUES(default,?,?,?)";
-    private final String REMOVEUSERBYID = "DELETE FROM users WHERE id = ";
-    private final String GETALLUSERS = "select * from users";
-    private final String CLEANUSERSTABLE = "delete from users";
+    private final String DROP_USERS_TABLE = "DROP TABLE users";
+    private final String SAVE_USER = "insert into users VALUES(default,?,?,?)";
+    private final String REMOVE_USER_BY_ID = "DELETE FROM users WHERE id = ";
+    private final String GET_ALL_USERS = "select * from users";
+    private final String CLEAN_USERS_TABLE = "delete from users";
 
     public UserDaoJDBCImpl() {
     }
 
     public void createUsersTable() {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(CREATEUSERSTABLE);
-            ps.execute(CREATEUSERSTABLE);
+            PreparedStatement ps = connection.prepareStatement(CREATE_USERS_TABLE);
+            ps.execute(CREATE_USERS_TABLE);
 
             connection.commit();
         } catch (SQLException e) {
@@ -35,8 +35,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(DROPUSERSTABLE);
-            ps.execute(DROPUSERSTABLE);
+            PreparedStatement ps = connection.prepareStatement(DROP_USERS_TABLE);
+            ps.execute(DROP_USERS_TABLE);
 
             connection.commit();
         } catch (SQLException e) {
@@ -48,7 +48,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Connection connection = getConnection()) {
             User user = new User(name, lastName, age);
 
-            PreparedStatement ps = connection.prepareStatement(SAVEUSER, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(SAVE_USER, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getName());
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
@@ -62,8 +62,8 @@ public class UserDaoJDBCImpl implements UserDao {
 //
     public void removeUserById(long id) {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(REMOVEUSERBYID);
-            ps.execute(REMOVEUSERBYID + id);
+            PreparedStatement ps = connection.prepareStatement(REMOVE_USER_BY_ID);
+            ps.execute(REMOVE_USER_BY_ID + id);
 
             connection.commit();
         } catch (SQLException e) {
@@ -74,8 +74,8 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(GETALLUSERS);
-            ResultSet resultSet = ps.executeQuery(GETALLUSERS);
+            PreparedStatement ps = connection.prepareStatement(GET_ALL_USERS);
+            ResultSet resultSet = ps.executeQuery(GET_ALL_USERS);
 
             while (resultSet.next()) {
                 User user = new User();
@@ -96,8 +96,8 @@ public class UserDaoJDBCImpl implements UserDao {
 //
     public void cleanUsersTable() {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(CLEANUSERSTABLE);
-            ps.execute(CLEANUSERSTABLE);
+            PreparedStatement ps = connection.prepareStatement(CLEAN_USERS_TABLE);
+            ps.execute(CLEAN_USERS_TABLE);
 
             connection.commit();
         } catch (SQLException e) {
