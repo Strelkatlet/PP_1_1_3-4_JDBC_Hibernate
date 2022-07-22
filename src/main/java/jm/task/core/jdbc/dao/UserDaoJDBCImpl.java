@@ -1,6 +1,8 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
+import jm.task.core.jdbc.util.Util;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +24,10 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void createUsersTable() {
         try (var connection = getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement ps = connection.prepareStatement(createUsersTable)) {
-                ps.execute(createUsersTable);
-            } catch (SQLException e) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                throw e;
-            }
+            PreparedStatement ps = connection.prepareStatement(createUsersTable);
+            ps.execute(createUsersTable);
+
             connection.commit();
-            connection.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -39,16 +35,10 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (var connection = getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement ps = connection.prepareStatement(dropUsersTable)) {
-                ps.execute(dropUsersTable);
-            } catch (SQLException e) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                throw e;
-            }
+            PreparedStatement ps = connection.prepareStatement(dropUsersTable);
+            ps.execute(dropUsersTable);
+
             connection.commit();
-            connection.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -57,19 +47,14 @@ public class UserDaoJDBCImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         try (var connection = getConnection()) {
             User user = new User(name, lastName, age);
-            connection.setAutoCommit(false);
-            try (PreparedStatement ps = connection.prepareStatement(saveUser, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, user.getName());
-                ps.setString(2, user.getLastName());
-                ps.setInt(3, user.getAge());
-                ps.executeUpdate();
-            }catch (SQLException e) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                throw e;
-            }
+
+            PreparedStatement ps = connection.prepareStatement(saveUser, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, user.getName());
+            ps.setString(2, user.getLastName());
+            ps.setInt(3, user.getAge());
+            ps.executeUpdate();
+
             connection.commit();
-            connection.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -77,16 +62,10 @@ public class UserDaoJDBCImpl implements UserDao {
 //
     public void removeUserById(long id) {
         try (var connection = getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement ps = connection.prepareStatement(removeUserById)) {
-                ps.execute(removeUserById + id);
-            } catch (SQLException e) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                throw e;
-            }
+            PreparedStatement ps = connection.prepareStatement(removeUserById);
+            ps.execute(removeUserById + id);
+
             connection.commit();
-            connection.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -95,26 +74,20 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         try (var connection = getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement ps = connection.prepareStatement(getAllUsers)) {
-                ResultSet resultSet = ps.executeQuery(getAllUsers);
+            PreparedStatement ps = connection.prepareStatement(getAllUsers);
+            ResultSet resultSet = ps.executeQuery(getAllUsers);
 
-                while (resultSet.next()) {
-                    User user = new User();
-                    user.setId(resultSet.getLong("id"));
-                    user.setName(resultSet.getString("name"));
-                    user.setLastName(resultSet.getString("lastName"));
-                    user.setAge(resultSet.getByte("age"));
-                    userList.add(user);
-                    System.out.println(user);
-                }
-            } catch (SQLException e) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                throw e;
+            while (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getLong("id"));
+                user.setName(resultSet.getString("name"));
+                user.setLastName(resultSet.getString("lastName"));
+                user.setAge(resultSet.getByte("age"));
+                userList.add(user);
+                System.out.println(user);
             }
+
             connection.commit();
-            connection.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -123,16 +96,10 @@ public class UserDaoJDBCImpl implements UserDao {
 //
     public void cleanUsersTable() {
         try (var connection = getConnection()) {
-            connection.setAutoCommit(false);
-            try (PreparedStatement ps = connection.prepareStatement(cleanUsersTable)) {
-                ps.execute(cleanUsersTable);
-            } catch (SQLException e) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                throw e;
-            }
+            PreparedStatement ps = connection.prepareStatement(cleanUsersTable);
+            ps.execute(cleanUsersTable);
+
             connection.commit();
-            connection.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
