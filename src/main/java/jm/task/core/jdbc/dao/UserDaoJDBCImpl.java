@@ -23,7 +23,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
-        try (var connection = getConnection()) {
+        try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(CUT);
             ps.execute(CUT);
 
@@ -34,7 +34,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        try (var connection = getConnection()) {
+        try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(DUT);
             ps.execute(DUT);
 
@@ -45,7 +45,7 @@ public class UserDaoJDBCImpl implements UserDao {
      }
 //
     public void saveUser(String name, String lastName, byte age) {
-        try (var connection = getConnection()) {
+        try (Connection connection = getConnection()) {
             User user = new User(name, lastName, age);
 
             PreparedStatement ps = connection.prepareStatement(SU, Statement.RETURN_GENERATED_KEYS);
@@ -61,7 +61,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 //
     public void removeUserById(long id) {
-        try (var connection = getConnection()) {
+        try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(RUBI);
             ps.execute(RUBI + id);
 
@@ -73,7 +73,7 @@ public class UserDaoJDBCImpl implements UserDao {
 //
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
-        try (var connection = getConnection()) {
+        try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(GAU);
             ResultSet resultSet = ps.executeQuery(GAU);
 
@@ -95,7 +95,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 //
     public void cleanUsersTable() {
-        try (var connection = getConnection()) {
+        try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement(CLUT);
             ps.execute(CLUT);
 
