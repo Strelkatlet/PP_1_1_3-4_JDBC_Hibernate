@@ -9,23 +9,23 @@ import java.util.List;
 import static jm.task.core.jdbc.util.Util.getConnection;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private final String CUT = "create table users(id BIGINT AUTO_INCREMENT primary key," +
+    private final String CREATEUSERSTABLE = "create table users(id BIGINT AUTO_INCREMENT primary key," +
             " name varchar(32)," +
             " lastName varchar(32)," +
             " age TINYINT)";
-    private final String DUT = "DROP TABLE users";
-    private final String SU = "insert into users VALUES(default,?,?,?)";
-    private final String RUBI = "DELETE FROM users WHERE id = ";
-    private final String GAU = "select * from users";
-    private final String CLUT = "delete from users";
+    private final String DROPUSERSTABLE = "DROP TABLE users";
+    private final String SAVEUSER = "insert into users VALUES(default,?,?,?)";
+    private final String REMOVEUSERBYID = "DELETE FROM users WHERE id = ";
+    private final String GETALLUSERS = "select * from users";
+    private final String CLEANUSERSTABLE = "delete from users";
 
     public UserDaoJDBCImpl() {
     }
 
     public void createUsersTable() {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(CUT);
-            ps.execute(CUT);
+            PreparedStatement ps = connection.prepareStatement(CREATEUSERSTABLE);
+            ps.execute(CREATEUSERSTABLE);
 
             connection.commit();
         } catch (SQLException e) {
@@ -35,8 +35,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(DUT);
-            ps.execute(DUT);
+            PreparedStatement ps = connection.prepareStatement(DROPUSERSTABLE);
+            ps.execute(DROPUSERSTABLE);
 
             connection.commit();
         } catch (SQLException e) {
@@ -48,7 +48,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Connection connection = getConnection()) {
             User user = new User(name, lastName, age);
 
-            PreparedStatement ps = connection.prepareStatement(SU, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(SAVEUSER, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getName());
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
@@ -62,8 +62,8 @@ public class UserDaoJDBCImpl implements UserDao {
 //
     public void removeUserById(long id) {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(RUBI);
-            ps.execute(RUBI + id);
+            PreparedStatement ps = connection.prepareStatement(REMOVEUSERBYID);
+            ps.execute(REMOVEUSERBYID + id);
 
             connection.commit();
         } catch (SQLException e) {
@@ -74,8 +74,8 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(GAU);
-            ResultSet resultSet = ps.executeQuery(GAU);
+            PreparedStatement ps = connection.prepareStatement(GETALLUSERS);
+            ResultSet resultSet = ps.executeQuery(GETALLUSERS);
 
             while (resultSet.next()) {
                 User user = new User();
@@ -96,8 +96,8 @@ public class UserDaoJDBCImpl implements UserDao {
 //
     public void cleanUsersTable() {
         try (Connection connection = getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(CLUT);
-            ps.execute(CLUT);
+            PreparedStatement ps = connection.prepareStatement(CLEANUSERSTABLE);
+            ps.execute(CLEANUSERSTABLE);
 
             connection.commit();
         } catch (SQLException e) {
